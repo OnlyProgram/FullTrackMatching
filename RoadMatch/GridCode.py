@@ -22,12 +22,14 @@ def Encode(X,Y,minX=115,minY=39,gridXSize=0.001,gridYSize=0.001):
     :return:
     """
     if (X < minX or Y < minY):
-        print("超出原点坐标范围,已将编码设置为空!")
+        print("小于原点坐标,已将编码设置为空!")
         return None,None
-    xNum = math.ceil(round((X-minX),5)/gridXSize)  #x方向格子编号
-    yNum = math.ceil(round((Y-minY),5)/gridYSize)   #y方向格子编号
-    secondxNum = math.ceil(round((X-minX),5)/0.0002) - (xNum-1)*5
-    secondyNum = math.ceil(round((Y-minY),5)/0.0002) - (yNum-1)*5
+    xNum = math.ceil((X-minX)/gridXSize)  #x方向格子编号,向上取整
+    yNum = math.ceil((Y-minY)/gridYSize)   #y方向格子编号
+    secondxNum = math.ceil((X-minX-(xNum-1)*gridXSize)/0.0002)
+    secondyNum = math.ceil((Y-minY-(yNum-1)*gridXSize)/0.0002)
+    #secondxNum = math.ceil(round((X-minX),5)/0.0002) - (xNum-1)*5
+    #secondyNum = math.ceil(round((Y-minY),5)/0.0002) - (yNum-1)*5
     FirstCode = CreateLongCode(xNum, yNum)
     code = FirstCode + str(secondxNum) +str(secondyNum)
     return FirstCode,code  #字符串
@@ -79,12 +81,10 @@ def GetDirectneighbor(startcode,endcode,coor):
     startlevelX1,startlevelY1,startlevelX2,startlevelY2 = Decode(startcode[1])
     endlevelX1,endlevelY1,endlevelX2,endlevelY2 = Decode(endcode[1])
     completeLineCode = [startcode]  #完整的相邻坐标点路段编号
-
     temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(startcode[1])
     if coor[3]-coor[1]==0:
-        #垂直X轴
-        if endlevelX1 > startlevelX1  or (
-                startcode[0] == endcode[0] and startlevelX2 < endlevelX2 ):
+        #垂直Y轴
+        if endlevelX1 > startlevelX1  or (startcode[0] == endcode[0] and startlevelX2 < endlevelX2 ):
             startx = coor[0] - 115 + 0.0002  # 与垂直X轴的直线 X = startx
             while not (endlevelX1 == temlevelX1 and endlevelX2 == temlevelX2):
                 completetemcode = Encode(startx + 115, coor[3])
@@ -99,7 +99,7 @@ def GetDirectneighbor(startcode,endcode,coor):
                 temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode[1])
                 completeLineCode.append(completetemcode)
     elif coor[2]-coor[0]==0:
-        #垂直Y轴
+        #垂直X
 
        if  endlevelY1 > startlevelY1 or (startcode[0] == endcode[0] and startlevelY2 < endlevelY2):  # and endlevelX1 < startlevelX1:
            #上方
@@ -120,71 +120,81 @@ def GetDirectneighbor(startcode,endcode,coor):
                temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode[1])
                completeLineCode.append(completetemcode)
     else:
-        k = ((coor[3] - 39) - (coor[1] - 39)) / ((coor[2] - 115) - (coor[0] - 115))
-        b = (coor[1] - 39) - k * (coor[0] - 115)
-        if endlevelX1 > startlevelX1 and endlevelY1 == startlevelY1 or (
-                startcode[0] == endcode[0] and startlevelX2 < endlevelX2 and startlevelY2 == endlevelY2):
+        k = (coor[3] - coor[1])/ (coor[2] - coor[0])
+        b = coor[1] - k * coor[0]
+        #判断右上
+        if endlevelX1 > startlevelX1 and endlevelY1 > startlevelY1 or (endlevelX1 == startlevelX1 and endlevelY1 >= startlevelY1
+                 and startlevelX2 <= endlevelX2 ) or (endlevelX1 >= startlevelX1 and endlevelY1 == startlevelY1
+                 and startlevelX2 <= endlevelX2 ):
             # 终点在起点的正右侧或者在同一大区域，但是终点小区域仍在起点小区域正右侧
-            startx = coor[0] - 115 + 0.0002  # 与垂直X轴的直线 X = startx
-            # starty = startlevelY1*0.001 #与y交点
-            while not (endlevelX1 == temlevelX1 and endlevelX2 == temlevelX2):
-                starty = k * startx + b
-                completetemcode = Encode(startx + 115, starty + 39)
-                startx += 0.0002
-                temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode[1])
-                completeLineCode.append(completetemcode)
-        elif endlevelX1 < startlevelX1 and endlevelY1 == startlevelY1 or (
-                startcode[0] == endcode[0] and startlevelX2 > endlevelX2 and startlevelY2 == endlevelY2):
-            # 终点在起点的正左侧
-            startx = coor[0] - 115 - 0.0002  # 与垂直X轴的直线 X = startx
-            # starty = startlevelY1*0.001 #与y交点
-            while not (endlevelX1 == temlevelX1 and endlevelX2 == temlevelX2):
-                starty = k * startx + b
-                completetemcode = Encode(startx + 115, starty + 39 )
-                startx -= 0.0002
-                temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode[1])
-                completeLineCode.append(completetemcode)
-        # elif endlevelX1 == startlevelX1 and endlevelY1 > startlevelY1:
-        #     # 终点在起点的正上方
-        #     starty = (startlevelY1) * 0.001  # 与垂直y轴的直线 Y= starty
-        #     while endcode[1] != temcode:
-        #         startx = (starty - b) / k
-        #         completetemcode = GetGridCode(startx + 115, starty + 39 + 0.00005)
-        #         starty += 0.0002
-        #         temcode = completetemcode[1]
-        # elif endlevelX1 == startlevelX1 and endlevelY1 < startlevelY1:
-        #     # 终点在起点的正下方
-        #     starty = (startlevelY1-1) * 0.001  # 与垂直y轴的直线 Y= starty
-        #     while endcode[1] != temcode:
-        #         startx = (starty - b) / k
-        #         completetemcode = GetGridCode(startx + 115, starty + 39 - 0.00005)
-        #         starty -= 0.0002
-        #         temcode = completetemcode[1]
-        elif endlevelY1 > startlevelY1 or (
-                startcode[0] == endcode[0] and startlevelY2 < endlevelY2):  # and endlevelX1 < startlevelX1:
-            # 终点在起点上方
-            starty = coor[1] - 39 + 0.0002
-            # temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(startcode[1])
-            while not (endlevelY1 == temlevelY1 and endlevelY2 == temlevelY2):
-                startx = (starty - b) / k
-                completetemcode = Encode(startx + 115, starty + 39)
-                starty += 0.0002
-                temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode[1])
-                completeLineCode.append(completetemcode)
-        elif endlevelY1 < startlevelY1 or (startcode[0] == endcode[0] and startlevelY2 > endlevelY2):
-            # 终点在起点下方
-            # starty = (startlevelY1 - 1) * 0.001 + startlevelY2 * 0.0002'
-            startx = coor[0]-115-0.0002
-            #starty = coor[1] - 39 - 0.0002
-            while not (endlevelY1 == temlevelY1 and endlevelY2 == temlevelY2):
-                #startx = (starty - b) / k
-                starty = k*(startx) + b
-                completetemcode = Encode(startx + 115, starty + 39)
-                #starty -= 0.0002
-                startx -= 0.0002
-                temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode[1])
-                completeLineCode.append(completetemcode)
+            startx = coor[0] + 0.0002  # 与垂直X轴的直线 X = startx
 
+            print("终点在起始点右上")
+            while startx < coor[2]:
+                completetemcode1 = Encode(startx, (k * startx + b))
+                startx += 0.0002
+                completeLineCode.append(completetemcode1)
+                # temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode1[1])
+            starty = coor[1] + 0.0002
+            while starty < coor[3] :
+                completetemcode2 = Encode(((starty - b) / k), starty)
+                starty += 0.0002
+                completeLineCode.append(completetemcode2)
+            print(k*116.4432+b)
+            print(k * 116.4434 + b)
+            print(k * 116.4436 + b)
+            print(k * 116.4438 + b)
+
+        #判断左上
+        elif endlevelX1 < startlevelX1 and endlevelY1 > startlevelY1 or (endlevelX1 == startlevelX1 and endlevelY1 >= startlevelY1
+                  ) or (endlevelX1 <= startlevelX1 and endlevelY1 == startlevelY1
+                  ):
+            startx = coor[0] - 0.0002  # 与垂直X轴的直线 X = startx
+            starty = coor[1] + 0.0002
+            print("终点在起始点左上")
+            while startx > coor[2] :
+                completetemcode1 = Encode(startx , (k * startx + b))
+                startx -= 0.0002
+                completeLineCode.append(completetemcode1)
+                # temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode1[1])
+
+            while starty < coor[3]:
+                completetemcode2 = Encode(((starty - b) / k), starty)
+                starty += 0.0002
+                completeLineCode.append(completetemcode2)
+        #判断左下
+        elif endlevelX1 <= startlevelX1 and endlevelY1 <= startlevelY1: #or (
+                #startcode[0] == endcode[0] and startlevelX2 >= endlevelX2 and startlevelY2 >= endlevelY2):
+            print("终点在起始点左下")
+            startx = coor[0] - 0.0002
+            starty = coor[1] - 0.0002
+            while startx > coor[2]:
+                completetemcode1 = Encode(startx, (k * startx + b))
+                startx -= 0.0002
+                completeLineCode.append(completetemcode1)
+                #temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode1[1])
+
+            while starty > coor[3]:
+                completetemcode2 = Encode(((starty - b) / k) , starty)
+                starty -= 0.0002
+                completeLineCode.append(completetemcode2)
+
+        # 判断右下
+        elif endlevelX1 >= startlevelX1 and endlevelY1 <= startlevelY1: #or (
+                #startcode[0] == endcode[0] and startlevelX2 <= endlevelX2 and startlevelY2 >= endlevelY2):
+            startx = coor[0]  + 0.0002  # 与垂直X轴的直线 X = startx
+            starty = coor[1] - 0.0002
+            print("终点在起始点右下")
+            while startx < coor[2]:
+                completetemcode1 = Encode(startx , (k * startx + b))
+                startx += 0.0002
+                completeLineCode.append(completetemcode1)
+                # temlevelX1, temlevelY1, temlevelX2, temlevelY2 = Decode(completetemcode1[1])
+
+            while starty > coor[3] :
+                completetemcode2 = Encode(((starty - b) / k) , starty)
+                starty -= 0.0002
+                completeLineCode.append(completetemcode2)
     completeLineCode.append(endcode)
     return completeLineCode
 def GetGridCodes(startX,startY,endX,endY):
@@ -210,12 +220,8 @@ def GetGridCodes(startX,startY,endX,endY):
         return GetDirectneighbor(startcode,endcode,[startX,startY,endX,endY])
 
 
-x = 116.4375358
-y = 39.7206477
+#print(Encode(116.4474821,39.7240476),Encode(116.4436357,39.7236821))
 
-print(Encode(116.44491,39.723963))
-# print(Neighbor(116.4330469,39.7210465))
-print(GetGridCodes(116.4474821,39.7240476,116.4436357,39.7236821))
 # prelist = GetGridCodes(116.4330469,39.7218465,116.4338469,39.7218465)
 # li = list(set(prelist))
 # li.sort(key=prelist.index)
