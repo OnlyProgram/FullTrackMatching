@@ -245,8 +245,10 @@ def InsertGridTable(waylistpath,dbname,tablename):
                 if Isflag == 1:
                     #`FirstLevelTable`(`WayID`, `GridCode`, `SequenceID`)
                     sequenceid = 0
-                    Common_Functions.del_adjacent(completeLineCode)
-                    for sub in completeLineCode:
+                    #Common_Functions.del_adjacent(completeLineCode)
+                    li = list(set(completeLineCode))
+                    li.sort(key=completeLineCode.index)
+                    for sub in li:
                         sequenceid += 1
                         sql_insert = 'insert into {}(WayID,GridCode,SequenceID) values({},{},{});'.format(tablename,key,repr(sub[1]),sequenceid)
                         try:

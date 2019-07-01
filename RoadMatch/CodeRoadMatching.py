@@ -43,8 +43,7 @@ def FindPointCandidateWay_Grid(csvfilepath,candidatewaypath,candidatewayname):
     print("本轨迹段共查找坐标点数为：{}".format(newdf.shape[0]))
     for row in range(newdf.shape[0]):
         point_candidawayList  = []
-        pointCode = GridCode.Encode(newdf.iloc[row, 1], newdf.iloc[row, 2])[1]
-        print(newdf.iloc[row, 1], newdf.iloc[row, 2])
+        pointCode = GridCode.Encode(newdf.iloc[row, 1], newdf.iloc[row, 2])
         waysets = list(Common_Functions.GetWay_ByGridCode(pointCode[1]))
         if waysets:
             point_candidawayList.extend(waysets)
@@ -55,12 +54,13 @@ def FindPointCandidateWay_Grid(csvfilepath,candidatewaypath,candidatewayname):
                     waysets = list(Common_Functions.GetWay_ByGridCode(subcode[1]))
                     point_candidawayList.extend(waysets)
         #file.write("PointID-" + str(row + 1) + "CandidateWay>>>" + str(set(point_candidawayList)) + "\n")
-        print(set(point_candidawayList))
+        print("PointID-" + str(row + 1) + "CandidateWay>>>" + str(set(point_candidawayList)))
     file.close()
 
 #code = GridCode.Encode(116.438871,39.720601)
 #way = Common_Functions.GetWay_ByGridCode('1534')
 import time
 start = time.time()
-FindPointCandidateWay_Grid("H:\GPS_Data\Road_Network\BYQBridge\TrunksArea\\cc4eb074-0041-4f6a-b553-6722331383e8.csv","H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid","cc4eb074-0041-4f6a-b553-6722331383e8")
+FindPointCandidateWay_Grid("H:\GPS_Data\Road_Network\BYQBridge\TrunksArea\\b79a4749-6228-4e47-8c1e-4e5c5dce8a53.csv","H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid","b79a4749-6228-4e47-8c1e-4e5c5dce8a53")
+
 print(time.time()-start)
