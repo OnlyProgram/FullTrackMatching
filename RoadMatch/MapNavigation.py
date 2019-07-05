@@ -70,7 +70,7 @@ def Get_way_NodeID(way_id):
     """
     根据way_id得出此路段node
     :param way_id:
-    :return: 饭后node列表
+    :return: node列表
     """
     connection = pymysql.connect(host='localhost', user='root', passwd='123456', charset='utf8')
     cursor = connection.cursor()

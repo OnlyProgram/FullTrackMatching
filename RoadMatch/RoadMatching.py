@@ -321,11 +321,6 @@ def SelectFinalRoute(candidatewaypath,savefinalroutespath):
             #print(finalline)
             finalline = Common_Functions.Start_End(finalline)  # 对于[wayid1,wayid2,wayid3] [wayid1,wayid4,wayid5,wayid3]  去除路段多的,如果包含路段数量一致 暂不处理
             finalline = Common_Functions.Sequential_subset(finalline)  # 最后去路线（至少两个及以上的其他路线是其前缀）
-            #print(finalline)
-            # finalline = Common_Functions.Double_layer_list(templine)  #去重
-            # finalline = Common_Functions.Sequential_subset(finalline)  #去除前缀（两个及以上）
-            #file.write(str(finalline) + "\n")
-            #file.flush()
         print("共选出{}条路".format(len(finalline)))
         for sub in finalline:
             file.write(str(sub) + "\n")

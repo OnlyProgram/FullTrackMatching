@@ -245,10 +245,10 @@ def InsertGridTable(waylistpath,dbname,tablename):
                 if Isflag == 1:
                     #`FirstLevelTable`(`WayID`, `GridCode`, `SequenceID`)
                     sequenceid = 0
-                    #Common_Functions.del_adjacent(completeLineCode)
-                    li = list(set(completeLineCode))
-                    li.sort(key=completeLineCode.index)
-                    for sub in li:
+                    Common_Functions.del_adjacent(completeLineCode)
+                    # li = list(set(completeLineCode))
+                    # li.sort(key=completeLineCode.index)
+                    for sub in completeLineCode:
                         sequenceid += 1
                         sql_insert = 'insert into {}(WayID,GridCode,SequenceID) values({},{},{});'.format(tablename,key,repr(sub[1]),sequenceid)
                         try:
@@ -270,4 +270,4 @@ def InsertGridTable(waylistpath,dbname,tablename):
 #InsrtWays("H:\GPS_Data\Road_Network\Beijing\\wayslist.json","bjosmmap","ways_nodes")
 #Extract_Inflection_point("bjosmmap","inflectionpoint")
 #InsertGeoTable("H:\GPS_Data\Road_Network\Beijing\wayslist.json","bjosmmap","Geotable")
-#InsertGridTable("H:\GPS_Data\Road_Network\BYQBridge\JSON\BigBYCQ\ways.json","bjosmmap","FirstLevelTable")
+InsertGridTable("H:\GPS_Data\Road_Network\BYQBridge\JSON\BigBYCQ\ways.json","bjosmmap","FirstLevelTable")
