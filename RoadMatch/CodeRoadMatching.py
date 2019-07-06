@@ -71,12 +71,11 @@ def SelectFinalRoutes(candidatewaypath,savefinalroutespath):
                 for sub in templine:
                     finalline.append(Common_Functions.del_adjacent(sub))
             else:pass
-            print(f"final:{finalline}")
+            #print(f"final:{finalline}")
         print("共选出{}条路".format(len(finalline)))
         for sub in finalline:
             print(sub)
-            #file.write(str(sub) + "\n")
-            #file.flush()
+            file.write(str(sub) + "\n")
         file.close()
 def FindPointCandidateWay_Grid(csvfilepath,candidatewaypath,candidatewayname):
     """
@@ -184,11 +183,11 @@ start = time.time()
 #         "H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid\BYC", trunkname)
 
 #最终路线
-#for subpath in Common_Functions.findtxtpath("H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid\BYC"):
-
-    #SelectFinalRoutes(subpath,"H:\GPS_Data\Road_Network\BYQBridge\FinalRoutes\Grid\BYC")
+for subpath in Common_Functions.findtxtpath("H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid\BYC"):
+    print(subpath)
+    SelectFinalRoutes(subpath,"H:\GPS_Data\Road_Network\BYQBridge\FinalRoutes\Grid\BYC")
 #FindPointCandidateWay_Grid("H:\GPS_Data\Road_Network\BYQBridge\TrunksArea\\334e4763-f125-425f-ae42-8028245764fe.csv","H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid\BYC","334e4763-f125-425f-ae42-8028245764fe")
 
-SelectFinalRoutes("H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid\BYC\\99b9e495-22f3-4dd2-81e1-a946b3805229.txt","H:\GPS_Data\Road_Network\BYQBridge\FinalRoutes\Grid\BYC")
+#SelectFinalRoutes("H:\GPS_Data\Road_Network\BYQBridge\CandidateWay\Grid\BYC\\99b9e495-22f3-4dd2-81e1-a946b3805229.txt","H:\GPS_Data\Road_Network\BYQBridge\FinalRoutes\Grid\BYC")
 
 print(time.time()-start)
