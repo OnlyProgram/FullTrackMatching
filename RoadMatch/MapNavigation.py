@@ -53,7 +53,7 @@ def Get_Coordinate(node_id):
     :param node_id:
     :return:
     """
-    connection = pymysql.connect(host='localhost', user='root', passwd='123456', charset='utf8')
+    connection = pymysql.connect(host='127.0.0.1', user='root', passwd='123456', charset='utf8')
     cursor = connection.cursor()
     cursor.execute("use bjosmmap;")
     sql = 'SELECT Lon,Lat FROM nodes WHERE nodes.Node_id={}'.format(node_id)
@@ -748,4 +748,5 @@ def Nodirectionwaytoway(way_id1,way_id2,max_sum=8):
 #print(waytoway(251623172,42725546))
 #print(JudgeLines([251623172, 251623159, 251623169, 251623168, 251623165, 113968808]))
 #print(JudgeLines([568126170, 159812371, 176432985, 176432983, 176432987, 159810646, 30878138])) #true
+
 

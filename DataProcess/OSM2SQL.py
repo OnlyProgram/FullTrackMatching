@@ -13,7 +13,7 @@ import json
 from tqdm import tqdm
 import math
 # 打开数据库连接
-from RoadMatch import MapNavigation,Coor_GeoHash,GridCode,Common_Functions
+from RoadMatch import MapNavigation,Coor_GeoHash,GridCode,Common_Functions,BigGridCode
 
 def CreatMysqlDatabase(database_name):
     # 使用 cursor() 方法创建一个游标对象 cursor
@@ -237,7 +237,7 @@ def InsertGridTable(waylistpath,dbname,tablename):
                     coor2 = MapNavigation.Get_Coordinate(dic[key][num])
                     if coor1 and coor2:
                         #print(coor1[0],coor1[1],coor2[0],coor2[1])
-                        temcodelist = GridCode.GetGridCodes(coor1[0],coor1[1],coor2[0],coor2[1])
+                        temcodelist = BigGridCode.GetGridCodes(coor1[0],coor1[1],coor2[0],coor2[1])
                         completeLineCode.extend(temcodelist)
                     else:
                         Isflag = 0
@@ -248,6 +248,8 @@ def InsertGridTable(waylistpath,dbname,tablename):
                     Common_Functions.del_adjacent(completeLineCode)
                     # li = list(set(completeLineCode))
                     # li.sort(key=completeLineCode.index)
+                    #with open("H:\GPS_Data\Road_Network\Beijing\\BJGrid.txt",'a') as file:
+                        #file.write(key +">>>" + str(completeLineCode)+"\n")
                     for sub in completeLineCode:
                         sequenceid += 1
                         sql_insert = 'insert into {}(WayID,GridCode,SequenceID) values({},{},{});'.format(tablename,key,repr(sub[1]),sequenceid)
@@ -258,7 +260,9 @@ def InsertGridTable(waylistpath,dbname,tablename):
                             print(e)
                             connection.rollback()
                             cursor.close()
-                else:pass
+                else:
+                    print(f"未导入：{key}")
+                    pass
                 pbar.update(1)
     connection.close()
 #运行示例
@@ -270,4 +274,6 @@ def InsertGridTable(waylistpath,dbname,tablename):
 #InsrtWays("H:\GPS_Data\Road_Network\Beijing\\wayslist.json","bjosmmap","ways_nodes")
 #Extract_Inflection_point("bjosmmap","inflectionpoint")
 #InsertGeoTable("H:\GPS_Data\Road_Network\Beijing\wayslist.json","bjosmmap","Geotable")
-InsertGridTable("H:\GPS_Data\Road_Network\BYQBridge\JSON\BigBYCQ\ways.json","bjosmmap","FirstLevelTable")
+#InsertGridTable("H:\GPS_Data\Road_Network\BYQBridge\JSON\BigBYCQ\ways.json","bjosmmap","FirstLevelTable")
+
+InsertGridTable("H:\GPS_Data\Road_Network\Beijing\wayslist.json","bjosmmap","FirstLevelTable")

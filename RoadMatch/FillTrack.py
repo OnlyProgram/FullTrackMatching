@@ -50,7 +50,6 @@ def Fill_coordinate_By_Routes(waylists:list):
             AllNodeIDLists.extend(nodelist[First_intersection_index:])
             break
         else:
-            print(waylists[index],waylists[index+1])
             Second_intersection = MapNavigation.TwoWay_intersection(waylists[index],waylists[index+1])[0][0]  #两条路交点,TwoWay_intersection返回的为元组，如（（1213）,）
             nodelist = Common_Functions.Get_way_Nodes(waylists[index])  #获得该路段的所有坐标点
             if index==0:
@@ -176,8 +175,8 @@ def BatchSelectLines(Candidatewaypath,savepath):
 #             "H:\GPS_Data\Road_Network\BYQBridge\KML\PartTrunksAreaKml\FullTrack\\10706a7b-3d56-4551-9a09-debda7d2c032\\10706a7b.txt")
 
 
-Common_Functions.list2kml(Fill_coordinate_By_Routes([568126170, 159812371, 176432985, 176432983, 176432987, 159810646, 30878138]),
-                          "section2","H:\GPS_Data\Road_Network\BYQBridge\KML\PartTrunksAreaKml\FullTrack")
+Common_Functions.list2kml(Fill_coordinate_By_Routes([242945739, 242945750, 242945771, 47574802, 680002283, 47574807]),
+                          "se","H:\GPS_Data\Road_Network\BYQBridge\KML\PartTrunksAreaKml\Grid\BYC")
 
 
 #print(GetAllLines([318909305, 317886767, 407991264, 51997674, 317916355, 391813868, 29135445, 317916344, 29135795, 391813830, 210697668, 317916290, 29135960, 47574189, 242945770, 47574191, 229521327, 258296019, 317889645, 317913828, 29136270, 606768167, 606768159, 508147677, 508312926, 466839062, 466839044, 466839045, 332203310, 332203325, 398538985]))

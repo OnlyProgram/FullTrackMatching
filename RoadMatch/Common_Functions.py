@@ -7,6 +7,7 @@ import pymysql
 import math
 from math import radians, cos, sin, asin, sqrt
 import os
+from RoadMatch import BigGridCode
 def findcsvpath(path):
     """Finding the *.txt file in specify path"""
     ret = []
@@ -634,7 +635,54 @@ def GetWay_ByGridCode(code):
     finally:
         cursor.close()
         connection.close()
+def GetWayAllCode(way):
+    """
+    获取way的所有编码
+    :param way:
+    :return:
+    """
+    connection = pymysql.connect(host='127.0.0.1', user='root', passwd='123456', charset='utf8')
+    cursor = connection.cursor()
+    cursor.execute("use bjosmmap;")
+    sql = 'SELECT GridCode FROM firstleveltable WHERE WayID={}'.format(way)
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        waycodelsit = []
+        for sub in result:
+            waycodelsit.append(sub[0])
+        return waycodelsit
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        connection.close()
+
+
+def GetTwoCoor_ByGrid(code, way):
+    """
+    获取way中code及其相邻单元格的坐标
+    :param code: 道路编码
+    :param way: 路网Id
+    :return:路way的两个坐标
+    """
+    waycodes_list = GetWayAllCode(way)
+    if waycodes_list:
+        index = waycodes_list.index(code)
+        if index ==len(waycodes_list)-1:
+            neighborcode = waycodes_list[index-1]
+            lon2,lat2 = BigGridCode.Coordinate_Decode(code)  #后一个坐标点
+            lon1,lat1 = BigGridCode.Coordinate_Decode(neighborcode)  #前一个坐标点
+        else:
+            neighborcode = waycodes_list[index+1]
+            lon2, lat2 = BigGridCode.Coordinate_Decode(neighborcode)  # 后一个坐标点
+            lon1, lat1 = BigGridCode.Coordinate_Decode(code)  # 前一个坐标点
+        return [lon1,lat1,lon2,lat2]
+    else:
+        return False
 #Find_Candidate_Route([116.5556,39.747,1556,747],[116.555183,39.746883,1556,747],2)
+#print(angle([0,0,1,0],[0,0,0,1]))
+
 
 
 
